@@ -3,7 +3,9 @@
     require_once '../functions.php';
 
     // 判断用户是否登录一定是最先去做
-    wx_get_current_user();
+    $users = wx_get_current_user();
+	
+	if ($users['level'] == '访客') header('Location: /admin/index-member.php');
 
 ?>
 <!DOCTYPE html>

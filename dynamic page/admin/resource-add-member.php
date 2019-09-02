@@ -3,14 +3,12 @@
     require_once '../functions.php';
 
     // 判断用户是否登录一定是最先去做
-    $users = wx_get_current_user();
-	
-	if ($users['level'] == '访客') header('Location: /admin/index-member.php');
+    wx_get_current_user();
 
     // 添加函数
-    function add_users() {
-        if(empty($_POST['name']) || empty($_POST['password']) || empty($_POST['nickname'])
-            || empty($_POST['level'])) {
+    function add_resource() {
+        if(empty($_POST['name']) || empty($_POST['link']) || empty($_POST['link_pw'])
+            || empty($_POST['category']) || empty($_POST['direction'])) {
                 $GLOBALS['message'] = '请完整填写表单！';
                 $GLOBALS['success'] = false;
                 return;
@@ -18,14 +16,13 @@
 
         // 接受并保存
         $name = $_POST['name'];
-        $password = $_POST['password'];
-        $nickname = $_POST['nickname'];
-        $level = $_POST['level'];
+        $link = $_POST['link'];
+        $link_pw = $_POST['link_pw'];
+        $direction = $_POST['direction'];
+        $category = $_POST['category'];
 
-        $password_md5 = md5($password);
+        $rows = wx_execute("insert into resource values (null, '{$name}', '{$link}', '{$link_pw}', '{$direction}', '{$category}');");
 
-        $rows = wx_execute("insert into users values (null, '/static/uploads/wuxielogo(opacity).png' ,'{$name}', '{$nickname}', '{$password_md5}', '{$level}');");
-        var_dump($rows);
         // 直接输出 true
         $GLOBALS['success'] = $rows > 0 ;
         $GLOBALS['message'] = $rows <= 0 ? '添加失败!' : '添加成功!' ;
@@ -36,7 +33,7 @@
     // =================================================
     if (empty($_GET['id'])) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            add_users();
+            add_resource();
         }
     }else {
         $id = (int)$_GET['id'];
@@ -54,21 +51,22 @@
                 $name = empty($_POST['name']) ? $current_edit['name'] : $_POST['name'];
                 $current_edit['name'] = $name;
 
-                $password = empty($_POST['password']) ? $current_edit['password'] : $_POST['password'];
-                $current_edit['press'] = $password;
+                $link = empty($_POST['link']) ? $current_edit['link'] : $_POST['link'];
+                $current_edit['link'] = $link;
 
-                $nickname = empty($_POST['nickname']) ? $current_edit['nickname'] : $_POST['nickname'];
-                $current_edit['nickname'] = $nickname;
+                $link_pw = empty($_POST['link_pw']) ? $current_edit['link_pw'] : $_POST['link_pw'];
+                $current_edit['link_pw'] = $link_pw;
 
-                $level = empty($_POST['level']) ? $current_edit['level'] : $_POST['level'];
-                $current_edit['level'] = $level;
+                $category = empty($_POST['category']) ? $current_edit['category'] : $_POST['category'];
+                $current_edit['category'] = $category;
 
-                $password_md5 = md5($password);
-                
+                $direction = empty($_POST['direction']) ? $current_edit['direction'] : $_POST['direction'];
+                $current_edit['direction'] = $direction;
+
                 // var_dump($current_edit);
-                $rows = wx_execute("update {$from} set name = '{$name}', password = '{$password_md5}' , 
-                                    nickname = '{$nickname}' , level = '{$level}' 
-                                    where id = {$id}");
+                $rows = wx_execute("update {$from} set name = '{$name}', link = '{$link}' , 
+                                    link_pw = '{$link_pw}' , category = '{$category}' ,
+                                    direction = '{$direction}' where id = {$id}");
                 // 直接输出 true
                 $GLOBALS['success'] = $rows > 0 ;
                 $GLOBALS['message'] = $rows <= 0 ? '修改失败!' : '修改成功!' ;
@@ -82,7 +80,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Users &laquo; WX</title>
+    <title>respirce-add &laquo; WX</title>
     <link rel="stylesheet" href="/static/assets/vendors/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="/static/assets/vendors/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="/static/assets/vendors/nprogress/nprogress.css">
@@ -99,14 +97,14 @@
         <?php include 'inc/navbar.php' ?>
         <div class="container-fluid">
             <div class="page-title">
-                <h1>用户</h1>
+                <h1>添加分享</h1>
             </div>
-                <!-- 有错误信息时展示 -->
+            <!-- 有错误信息时展示 -->
             <!-- <div class="alert alert-danger">
-                <strong>错误!</strong>发生XXX错误
+                <strong>错误！</strong>发生XXX错误
             </div> -->
             <div class="row">
-                <div class="col-md-4">
+            <div class="col-md-6 add">
                     <?php if (isset($message)) : ?>
                     <?php if ($success): ?>
                     <div class="alert alert-success">
@@ -114,59 +112,69 @@
                     </div>
                     <?php else: ?>
                     <div class="alert alert-danger">
-                    <strong>错误！</strong> <?php echo $message; ?> 或无变化
+                    <strong>错误！</strong> <?php echo $message; ?>
                     </div>
                     <?php endif ?>
                     <?php endif ?>
                     <?php if(isset($current_edit)): ?>
-                    <form class="col-md-10" action="<?php echo $_SERVER['PHP_SELF']; ?>?from=users&id=<?php echo $current_edit['id']; ?>" method="post">
-                        <h4>编辑 '<?php echo $current_edit['name'] ?>' </h4>
+                    <form class="col-md-10" action="<?php echo $_SERVER['PHP_SELF']; ?>?from=resource&id=<?php echo $current_edit['id'] ?>" method="post">
+                        <h4>编辑《<?php echo $current_edit['name'] ?>》</h4>
                         <div class="form-group">
-                            <label for="name">用户名：</label>
-                            <input id="name" class="form-control" name="name" type="text" placeholder="用户名"
+                            <label for="name">资源名称：</label>
+                            <input id="name" class="form-control" name="name" type="text" placeholder="名称"
                             value="<?php echo $current_edit['name'] ?>">
                         </div>
                         <div class="form-group">
-                            <label for="password">密码：</label>
-                            <input id="password" class="form-control" name="password" type="password" placeholder="密码"
-                            value="<?php echo $current_edit['password']; ?>">
+                            <label for="link">链接：</label>
+                            <input id="link" class="form-control" name="link" type="text" placeholder="出版社"
+                            value="<?php echo $current_edit['link']; ?>">
                         </div>
                         <div class="form-group">
-                            <label for="nickname">昵称：</label>
-                            <input id="nickname" class="form-control" name="nickname" type="text" placeholder="昵称"
-                            value="<?php echo $current_edit['nickname']; ?>">
+                            <label for="link_pw">提取码：</label>
+                            <input id="link_pw" class="form-control" name="link_pw" type="text" placeholder="没有填无"
+                            value="<?php echo $current_edit['link_pw']; ?>">
                         </div>
                         <div class="form-group">
-                            <label for="level">级别：</label>
-                            <input id="level" class="form-control" name="level" type="text" placeholder="类别"
-                            value="<?php echo $current_edit['level'] ?>">
+                            <label for="category">类别：</label>
+                            <input id="category" class="form-control" name="category" type="text" placeholder="类别"
+                            value="<?php echo $current_edit['direction'] ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="direction">方向：</label>
+                            <input id="direction" class="form-control" name="direction" type="text" placeholder="方向"
+                            value="<?php echo $current_edit['direction'] ?>">
                         </div>
                         <div class="form-group text-center">
                             <button class="btn btn-primary" type="submit">保存</button>
                         </div>
                     </form>
                     <?php else: ?>
-                    <form class="col-md-10" action="<?php echo $_SERVER['PHP_SELF']; ?>?from=users" method="post">
-                        <h2>添加新用户</h2>
+                    <form class="col-md-10" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+                        <h4>添加分享</h4>
                         <div class="form-group">
-                            <label for="name">用户名：</label>
-                            <input id="name" class="form-control" name="name" type="text" placeholder="用户名"
+                            <label for="name">资源名称：</label>
+                            <input id="name" class="form-control" name="name" type="text" placeholder="名称"
                             value="<?php echo isset($_POST['name']) ? $_POST['name'] : '' ?>">
                         </div>
                         <div class="form-group">
-                            <label for="password">密码：</label>
-                            <input id="password" class="form-control" name="password" type="password" placeholder="密码"
-                            value="<?php echo isset($_POST['password']) ? $_POST['password'] : '' ?>">
+                            <label for="link">链接：</label>
+                            <input id="link" class="form-control" name="link" type="text" placeholder="出版社"
+                            value="<?php echo isset($_POST['link']) ? $_POST['link'] : '' ?>">
                         </div>
                         <div class="form-group">
-                            <label for="nickname">昵称：</label>
-                            <input id="nickname" class="form-control" name="nickname" type="text" placeholder="昵称"
-                            value="<?php echo isset($_POST['nickname']) ? $_POST['nickname'] : '' ?>">
+                            <label for="link_pw">提取码：</label>
+                            <input id="link_pw" class="form-control" name="link_pw" type="text" placeholder="没有填无"
+                            value="<?php echo isset($_POST['link_pw']) ? $_POST['link_pw'] : '' ?>">
                         </div>
                         <div class="form-group">
-                            <label for="level">级别：</label>
-                            <input id="level" class="form-control" name="level" type="text" placeholder="级别"
-                            value="<?php echo isset($_POST['level']) ? $_POST['level'] : '' ?>">
+                            <label for="category">类别：</label>
+                            <input id="category" class="form-control" name="category" type="text" placeholder="类别"
+                            value="<?php echo isset($_POST['category']) ? $_POST['category'] : '' ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="direction">方向：</label>
+                            <input id="direction" class="form-control" name="direction" type="text" placeholder="方向"
+                            value="<?php echo isset($_POST['direction']) ? $_POST['direction'] : '' ?>">
                         </div>
                         <div class="form-group text-center">
                             <button class="btn btn-primary" type="submit">添加</button>
@@ -174,41 +182,47 @@
                     </form>
                     <?php endif; ?>
                 </div>
-                <div class="col-md-8">
-                    <div class="page-action">
-                        <!-- show when multiple checked -->
-                        <a  id="btn_delete" class="btn btn-danger btn-sm" href="/admin/api/delete.php" style="display: none">批量删除</a>
+                <div class="col-md-6 search">
+                    <div class="search-input">
+                        <div id="box-search" class="input-group">
+                            <input id="search-name" type="text" class="form-control input-lg" placeholder="名称">
+                            <span id="search" class="input-group-addon btn btn-primary">搜索</span>
+                        </div>
                     </div>
-                    <table class="table table-striped table-bordered table-hover">
-                        <thead>
-                            <tr>
-                            <th class="text-center" width="40"><input type="checkbox"></th>
-                            <th class="text-center">用户名</th>
-                            <th class="text-center">昵称</th>
-                            <th class="text-center">级别</th>
-                            <th class="text-center" width="100">操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
+                    <div>
+                        <div class="page-action">
+                            <!-- 当选中多个时 呈现-->
+                        </div>
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" width="100px">名称</th>
+                                    <th class="text-center" width="100px">链接</th>
+                                    <th class="text-center" width="50px">提取码</th>
+                                    <th class="text-center" width="50px">类别</th>
+                                    <th class="text-center" width="50px">方向</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 侧边栏 -->
-    <?php $current_page = 'users'; ?>
-    <?php include 'inc/sidebar.php'?>
+    <?php $current_page = 'resource-add'; ?>
+    <?php include 'inc/sidebar-member.php'?>
+
     <script id="tbody_tmpl" type="text/wx-jsrender">
     {{for comments}}
     <tr data-id="{{:id }}">
-        <td class="text-center"><input type="checkbox"></td>
         <td class="text-center">{{:name}}</td>
-        <td class="text-center">{{:nickname}}</td>
-        <td class="text-center">{{:level}}</td>
-        <td class="text-center">
-            <a href="/admin/users.php?from=users&id={{:id}}" class="btn btn-default btn-xs">编辑</a>
-            <a href="javascript:;" class="btn btn-danger btn-xs btn-delete">删除</a>
-        </td>
+        <td class="text-center">{{:link}}</td>
+        <td class="text-center">{{:link_pw}}</td>
+        <td class="text-center">{{:category}}</td> 
+        <td class="text-center">{{:direction}}</td>
     </tr>
     {{/for}}
     </script>
@@ -245,7 +259,7 @@
 
                 // 根据剩下多少选中的 checkbox 决定
                 allCheckeds.length ? $btnDelete.fadeIn() : $btnDelete.fadeOut();
-                $btnDelete.prop('search', '?from=users&id=' + allCheckeds);
+                $btnDelete.prop('search', '?from=resource&id=' + allCheckeds);
             })
             $('thead input').on('change', function () {
                 // 1. 获取当前选中状态
@@ -259,9 +273,10 @@
             })
         }
         
-        $( function ($) {
+        $('#search').on('click', function () {
+            var name = $('#search-name').val();
             $('tbody').fadeOut(function () {
-                $.getJSON('/admin/api/search.php?from=users', function (data) {
+                $.getJSON('/admin/api/search.php?from=resource', { name : name }, function (data) {
                     var html = '';
                     for (var i = 0; i < data.length; i++){
                         html += $('#tbody_tmpl').render({ comments : data[i] });
@@ -278,7 +293,7 @@
             var id = $tr.data('id');
 
             // 2. 发送一个AJAX 请求告诉服务端要删除哪一条具体的数据
-            $.get('/admin/api/search-delete.php?from=users', {id: id}, function (res) {
+            $.get('/admin/api/search-delete.php?from=resource', {id: id}, function (res) {
                 if (!res) return;
                 // // 3. 根据服务端返回的删除是否成功决定是否在界面上移除这个元素   ============================== 方式一
                 $tr.remove();

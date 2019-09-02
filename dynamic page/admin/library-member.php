@@ -3,9 +3,7 @@
     require_once '../functions.php';
 
     // 判断用户是否登录一定是最先去做
-    $users = wx_get_current_user();
-	
-	if ($users['level'] == '访客') header('Location: /admin/index-member.php');
+    wx_get_current_user();
 
     $where = '1 = 1';
     $search = '';
@@ -107,7 +105,6 @@
         <div class="container-fluid">
             <div class="page-title">
                 <h1>图书信息</h1>
-                <a href="/admin/library-add.php" class="btn btn-primary btn-xs">新增</a>
             </div>
                 <!-- 有错误信息时展示 -->
             <!-- <div class="alert alert-danger">
@@ -115,7 +112,6 @@
             </div> -->
             <div class="page-action">
                 <!-- 当多重选中时显示 -->
-                <a id="btn_delete" class="btn btn-danger btn-sm" href="/admin/api/delete.php" style="display: none;">批量删除</a>
                 <form class="form-inline" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                         <select class="form-control input-sm" name="category">
                             <option value="all">所有类别</option>
@@ -151,29 +147,22 @@
             <table class="table table-striped table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th class="text-center" width="40"><input type="checkbox" name="" id=""></th>
                         <th>名称</th>
                         <th>出版社</th>
                         <th>数量</th>
                         <th class="text-center">类别</th>
                         <th class="text-center">方向</th>
-                        <th class="text-center" width="100">操作</th>
                     </tr>
                 </thead>
                 <tbody>
                 <?php if (isset($post)) : ?>
                     <?php foreach ($post as $item) : ?>
                     <tr>
-                        <td class="text-center"><input type="checkbox" data-id="<?php echo $item['id']; ?>"></td>
                         <td><?php echo $item['name']; ?></td>
                         <td><?php echo $item['press']; ?></td>
                         <td><?php echo $item['number']; ?></td>
                         <td class="text-center"><?php echo $item['category']; ?></td>
                         <td class="text-center"><?php echo $item['direction']; ?></td>
-                        <td class="text-center">
-                            <a href="/admin/library-add.php?from=library&id=<?php echo $item['id'] ?>" class="btn btn-default btn-xs">编辑</a>
-                            <a href="/admin/api/delete.php?id=<?php echo $item['id'] . '&from=library'?>" class="btn btn-danger btn-xs">删除</a>
-                        </td>
                     </tr>
                     <?php endforeach ?>
                     <?php endif ?>
@@ -184,7 +173,7 @@
 
     <!-- 侧边栏 -->
     <?php $current_page = 'library'; ?>
-    <?php include 'inc/sidebar.php'?>
+    <?php include 'inc/sidebar-member.php'?>
 
     <script src="/static/assets/vendors/jquery/jquery.js"></script>
     <script src="/static/assets/vendors/bootstrap/js/bootstrap.js"></script>

@@ -47,9 +47,14 @@ function login () {
     // 为了后续可以直接获取当前登录用户的信息，这里直接将用户信息放到 session 中
     $_SESSION['current_login_user'] = $user;
     // $_SESSION['current_login_user_id'] = $user['id'];
-
-    // 一切 ok 即可跳转
-    header('Location: /admin/');
+	
+	// 一切 ok 即可跳转
+	if($user['level'] == '访客') {
+		header('Location: /admin/index-member.php');
+	} else {
+		// 管理员界面
+		header('Location: /admin/');
+	}
 }
 
 // 判断当前是否是 POST 请求

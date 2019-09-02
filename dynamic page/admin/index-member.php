@@ -3,9 +3,7 @@
     require_once '../functions.php';
 
     // 判断用户是否登录一定是最先去做
-    $users = wx_get_current_user();
-	
-	if ($users['level'] == '访客') header('Location: /admin/index-member.php');
+    wx_get_current_user();
 
     $person_number = wx_fetch_one("select 
                                     count(1) as number
@@ -122,7 +120,7 @@
 
     <!-- 侧边栏 -->
     <?php $current_page = 'index'; ?>
-    <?php include 'inc/sidebar.php'?>
+    <?php include 'inc/sidebar-member.php'?>
 
     <script src="/static/assets/vendors/jquery/jquery.js"></script>
     <script src="/static/assets/vendors/bootstrap/js/bootstrap.js"></script>
