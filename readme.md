@@ -1,5 +1,9 @@
 # 物联网协会网站
 
+[静态页面](https://github.com/hinsenoo/wuxie/tree/master/static%20page)
+[动态页面](https://github.com/hinsenoo/wuxie/tree/master/dynamic%20page)
+[开发文档](https://github.com/hinsenoo/wuxie/blob/master/readme.md)
+
 ## 项目简介:
 
 ​		北部湾大学物联网协会网站,包含前台展示页面以及后台管理页面
