@@ -1,8 +1,9 @@
 # 物联网协会网站
 
-[静态页面](https://github.com/hinsenoo/wuxie/tree/master/static%20page)
-[动态页面](https://github.com/hinsenoo/wuxie/tree/master/dynamic%20page)
-[开发文档](https://github.com/hinsenoo/wuxie/blob/master/readme.md)
+- [网站地址](http://106.53.100.174/admin/)
+- [静态页面](https://github.com/hinsenoo/wuxie/tree/master/static%20page)
+- [动态页面](https://github.com/hinsenoo/wuxie/tree/master/dynamic%20page)
+- [开发文档](https://github.com/hinsenoo/wuxie/blob/master/readme.md)
 
 ## 项目简介:
 
@@ -48,5 +49,3 @@
     - 管理员可以通过管理后台增加用户
     - 管理员可以通过管理后台删除用户
 
-
-# wuxie
