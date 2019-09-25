@@ -11,6 +11,8 @@
 
 ## 项目预览演示:
 
+![1](https://github.com/hinsenoo/wuxie/blob/master/MQS2CIYROAZ1C3B7%25N48%7BTG.png)
+
 ####  前台界面:
 
 #### 后台界面:
