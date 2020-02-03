@@ -1,6 +1,6 @@
 # 物联网协会网站
 
-- [网站地址](http://106.53.100.174/admin/)
+- [网站地址 默认 账号密码都为 admin](http://www.hinsenoo.top:88)
 - [静态页面](https://github.com/hinsenoo/wuxie/tree/master/static%20page)
 - [动态页面](https://github.com/hinsenoo/wuxie/tree/master/dynamic%20page)
 - [开发文档](https://github.com/hinsenoo/wuxie/blob/master/readme.md)
